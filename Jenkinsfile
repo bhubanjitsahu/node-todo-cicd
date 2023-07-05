@@ -10,14 +10,14 @@ pipeline {
             }
         }
         stage("push image") {
-           steps {
-               script {
+            steps {
+                script {
                     echo "pushing the docker image"
-                    withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                    sh "docker tag node-app-test-new ${env.dockerHubUser}/todo-app:latest"
-                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                    sh "docker push ${env.dockerHubUser}/todo-app:latest"
-                    
+                    withCredentials([usernamePassword(credentialsId: "dockerHub", passwordVariable: "dockerHubPass", usernameVariable: "dockerHubUser")]) {
+                        sh "docker tag todo-app ${env.dockerHubUser}/todo-app:latest"
+                        sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+                        sh "docker push ${env.dockerHubUser}/todo-app:latest"
+                    }
                 }
             }
         }
@@ -25,9 +25,8 @@ pipeline {
             steps {
                 script {
                     echo "deploying the app"
-                   sh "docker run -d --name todo-app -p 8000:8000 todo-app"
+                    sh "docker run -d --name todo-app -p 8000:8000 ${env.dockerHubUser}/todo-app:latest"
                 }
-
             }
         }
     }
