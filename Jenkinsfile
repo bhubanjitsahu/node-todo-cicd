@@ -24,8 +24,8 @@ pipeline {
         stage("deploy") {
             steps {
                 script {
-                echo 'deploying the app'
-                docker run -d --name todo-app -p 8000:8000 todo-app
+                    echo 'deploying the app'
+                   sh "docker run -d --name todo-app -p 8000:8000 todo-app"
                 }
 
             }
