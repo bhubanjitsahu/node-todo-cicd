@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     echo "building the docker image"
-                    sh "docker build . -t bhubanjitsahu/todo-app:todo-app"
+                    sh 'docker build . -t bhubanjitsahu/demo-app:todo-app'
                 }
             }
         }
@@ -14,9 +14,8 @@ pipeline {
                 script {
                     echo "pushing the docker image"
                     withCredentials([usernamePassword(credentialsId: "dockerHub", passwordVariable: "dockerHubPass", usernameVariable: "dockerHubUser")]) {
-                        sh "docker tag todo-app ${env.dockerHubUser}/todo-app:latest"
-                        sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                        sh "docker push bhubanjitsahu/todo-app:latest"
+                        sh "echo $dockerHubPass | docker login -u $dockerHubUser --password-stdin"
+                        sh "docker push bhubanjitsahu/demo-app:todo-app"
                     }
                 }
             }
@@ -25,7 +24,6 @@ pipeline {
             steps {
                 script {
                     echo "deploying the app"
-                    sh "docker run -d --name todo-app -p 8000:8000 ${env.dockerHubUser}/todo-app:latest"
                 }
             }
         }
